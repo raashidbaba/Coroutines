@@ -23,22 +23,30 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(API::class.java)
-        api.getComments().enqueue(object : Callback<List<Comment>> {
-            override fun onFailure(call: Call<List<Comment>>, t: Throwable) {
-                Log.e("main", "ERROR: $t")
-            }
+        /* api.getComments().enqueue(object : Callback<List<Comment>> {
+             override fun onFailure(call: Call<List<Comment>>, t: Throwable) {
+                 Log.e("main", "ERROR: $t")
+             }
 
-            override fun onResponse(call: Call<List<Comment>>, response: Response<List<Comment>>) {
-                if (response.isSuccessful){
-                    response.body()?.let {
-                        for (comment in it){
-                            Log.d("main",comment.toString())
-                        }
+             override fun onResponse(call: Call<List<Comment>>, response: Response<List<Comment>>) {
+                 if (response.isSuccessful){
+                     response.body()?.let {
+                         for (comment in it){
+                             Log.d("main",comment.toString())
+                         }
 
-                    }
+                     }
+                 }
+             }
+         })
+ */
+        GlobalScope.launch(Dispatchers.IO) {
+            val response = api.getComments()
+            if (response.isSuccessful) {
+                for (comment in response.body()!!) {
+                    Log.d("activity", comment.toString())
                 }
             }
-        })
-
+        }
     }
 }
